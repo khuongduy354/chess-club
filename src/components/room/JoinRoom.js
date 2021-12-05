@@ -1,6 +1,7 @@
 // Setup
 import React from "react";
 import { useRef, useState } from "react";
+import { _global } from "../../_global";
 
 const JoinRoom = () => {
   const roomName = useRef("");
@@ -12,7 +13,7 @@ const JoinRoom = () => {
         <button
           onClick={() => {
             window.location.replace(
-              "http://localhost:3000" +
+              _global.CLIENT_URL +
                 "/room/" +
                 roomName.current.value +
                 "/" +
