@@ -6,7 +6,9 @@ export const Chat = ({ socket, roomName, userName }) => {
   const msg = useRef("");
   useEffect(() => {
     socket.on("receive-message", (newMsg) => {
-      setMsgs([newMsg, ...msgs]);
+      setMsgs(() => {
+        return [newMsg, ...msgs];
+      });
     });
 
     return () => {

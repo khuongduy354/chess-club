@@ -104,6 +104,13 @@ const MoveValidator = ({ player, socket, roomName, doStart }) => {
       socket.emit("move", chessGame.fen(), roomName, ({ error }) => {
         if (error) return alert(error);
       });
+      socket.emit("send-time", "pause", player, roomName);
+      socket.emit(
+        "send-time",
+        "resume",
+        player === "black" ? "white" : "black",
+        roomName
+      );
     }
     setFen(chessGame.fen());
     setHistory(chessGame.history({ verbose: true }));
@@ -137,6 +144,13 @@ const MoveValidator = ({ player, socket, roomName, doStart }) => {
       socket.emit("move", chessGame.fen(), roomName, ({ error }) => {
         if (error) return alert(error);
       });
+      socket.emit("send-time", "pause", player, roomName);
+      socket.emit(
+        "send-time",
+        "resume",
+        player === "black" ? "white" : "black",
+        roomName
+      );
     }
     setFen(chessGame.fen());
     setHistory(chessGame.history({ verbose: true }));

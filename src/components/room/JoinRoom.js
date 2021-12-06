@@ -26,7 +26,13 @@ const JoinRoom = () => {
         <input type="text" ref={userName} placeholder="Enter user name" />
         <input ref={roomName} type="text" placeholder="Enter room name here" />
         <p>Nhập tên phòng, nếu phòng không tồn tại sẽ tạo phòng mới </p>
-        <button>Close</button>
+        <button
+          onClick={() => {
+            window.location.replace(_global.CLIENT_URL + "/");
+          }}
+        >
+          Close
+        </button>
       </div>
     );
   };

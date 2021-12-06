@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 
 import socket from "./Socket";
@@ -7,14 +7,17 @@ import { useParams } from "react-router-dom";
 import { Chat } from "./Chat";
 import MoveValidator from "../chess/integrations/MoveValidator";
 
+import Timer from "./timer";
 import { _global } from "../../_global";
 const Room = () => {
-  const [doStart, setDoStart] = useState(false);
   const { roomName, userName } = useParams();
+  const [doStart, setDoStart] = useState(false);
   const [player, setPlayer] = useState(null);
-  const [game, setGame] = useState("start");
-  const [black, setBlack] = useState("");
   const [white, setWhite] = useState("");
+  const [black, setBlack] = useState("");
+
+  const [game, setGame] = useState("start");
+
   // Sockets
   // connecting
   useEffect(() => {
@@ -57,7 +60,10 @@ const Room = () => {
   useEffect(() => {
     socket.once("update-game", ({ black, white }) => {
       socket.emit("system-message", `Game started`, roomName);
-      if (!doStart) setDoStart(true);
+      if (!doStart) {
+        socket.emit("send-time", "resume", "white", roomName);
+        setDoStart(true);
+      }
     });
   }, [doStart]);
   // end game
@@ -67,12 +73,13 @@ const Room = () => {
       const winSide = result.lostSide === "b" ? "White" : "Black";
       const win_msg = `${winSide} won the game`;
       socket.emit("system-message", win_msg, roomName);
+      socket.emit("send-time", "reset", null, roomName);
     });
     return () => {
       socket.removeListener("end-game");
     };
   });
-  // End socket
+
   const ready = (side) => {
     socket.emit(
       "ready",
@@ -99,6 +106,7 @@ const Room = () => {
             intialFen={game}
           />
           <div class="flex flex-col justify-center">
+            <Timer roomName={roomName} socket={socket} _side={`black`} />
             <button
               onClick={() => {
                 ready("black");
@@ -115,6 +123,7 @@ const Room = () => {
             >
               {white ? white : "White"}
             </button>
+            <Timer roomName={roomName} socket={socket} _side={"white"} />
             {player && (
               <button
                 onClick={() => {
